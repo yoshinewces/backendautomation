@@ -1,0 +1,168 @@
+{
+	"info": {
+		"_postman_id": "93885ff1-d459-4761-abb9-c9997cd6309e",
+		"name": "pipe",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "CreatePipe",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Verify Pipe creation\", function () {\r",
+							"    var responseJson = pm.response.json();\r",
+							"    postman.setEnvironmentVariable(\"pipeId\", responseJson.data.createPipe.pipe[\"id\"]);\r",
+							"   pm.expect(responseJson.data.createPipe.pipe[\"name\"]).equals(\"Pipe QA Test\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "mutation {\r\n  createPipe(input: {name: \"Pipe QA Test\", organization_id: 300519065}) {\r\n    pipe {\r\n      id,\r\n      name\r\n    }\r\n  }\r\n}",
+						"variables": ""
+					}
+				},
+				"url": {
+					"raw": "{{url}}",
+					"host": [
+						"{{url}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreatePhase",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Verify Pipe creation\", function () {\r",
+							"    var responseJson = pm.response.json();\r",
+							"    postman.setEnvironmentVariable(\"phaseId\", responseJson.data.createPhase.phase[\"id\"]);\r",
+							"   pm.expect(responseJson.data.createPhase.phase[\"name\"]).equals(\"First Phase\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "mutation ($pipe_id: ID!) {\r\n  createPhase(\r\n    input: {\r\n      pipe_id: $pipe_id\r\n      name: \"First Phase\"\r\n      done: false\r\n      lateness_time: 172800\r\n      description: \"First phase description.\"\r\n      can_receive_card_directly_from_draft: true\r\n    }\r\n  ) {\r\n    phase {\r\n      id\r\n      name\r\n    }\r\n  }\r\n}",
+						"variables": "{ \"pipe_id\": {{pipeId}} }"
+					}
+				},
+				"url": {
+					"raw": "{{url}}",
+					"host": [
+						"{{url}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreatePhaseField",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Verify Pipe creation\", function () {\r",
+							"    var responseJson = pm.response.json();\r",
+							"    postman.setEnvironmentVariable(\"phaseFieldId\", responseJson.data.createPhaseField.phase_field[\"id\"]);\r",
+							"   pm.expect(responseJson.data.createPhaseField.phase_field[\"label\"]).equals(\"Custom Field\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "mutation ($phase_id: ID!) {\r\n  createPhaseField(\r\n    input: {\r\n      phase_id: $phase_id\r\n        type: \"short_text\"\r\n        label: \"Custom Field\"\r\n    }\r\n  ) {\r\n    phase_field {\r\n      id\r\n      label\r\n    }\r\n  }\r\n}",
+						"variables": "{\r\n    \"phase_id\": {{phaseId}}\r\n}"
+					}
+				},
+				"url": {
+					"raw": "{{url}}",
+					"host": [
+						"{{url}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CreateCard",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "graphql",
+					"graphql": {
+						"query": "mutation ($pipe_id: ID!, $phase_field_id: ID!) {\r\n  createCard(\r\n    input: {\r\n      pipe_id: $pipe_id\r\n      assignee_ids: []\r\n      attachments: []\r\n      due_date: \"\"\r\n      fields_attributes: []\r\n      label_ids: []\r\n      parent_ids: []\r\n      phase_id: $phase_field_id\r\n      title: \"Card title\"\r\n    }\r\n  ) {\r\n    card {\r\n      id\r\n      title\r\n    }\r\n  }\r\n}",
+						"variables": "{\r\n    \"pipe_id\": {{pipeId}},\r\n    \"phase_field_id\": {{phaseFieldId}}\r\n}"
+					}
+				},
+				"url": {
+					"raw": "{{url}}",
+					"host": [
+						"{{url}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
